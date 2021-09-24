@@ -49,12 +49,19 @@ namespace Task_If
 
    public class Program
    {
-        public static bool IsTrainStand(Time TrainArrive, Time TrainLeave, Time Passenger)
+        public static bool IsTrainStand(Time TrainArrive, Time TrainLeave, Time Passenger, bool IsLeaveDay)
         {
-            if(TrainLeave < TrainArrive) throw new ArgumentException("Введены неверные данные");
-
+            bool CrossDay = TrainLeave < TrainArrive;
             bool Result = false;
-            if (TrainArrive < Passenger && Passenger < TrainLeave)
+            if (TrainArrive < Passenger && Passenger < TrainLeave) //Обычный целый день
+            {
+                Result = true;
+            }
+            else if(TrainArrive < Passenger && Passenger > TrainLeave && !IsLeaveDay && CrossDay) //Пассажир пришел в день прибытия
+            {
+                Result = true;
+            }
+            else if (TrainArrive > Passenger && Passenger < TrainLeave && IsLeaveDay && CrossDay) //Пассажир пришел в день отправления
             {
                 Result = true;
             }
@@ -75,7 +82,14 @@ namespace Task_If
                 Time TrainLeave = Fill("Время отправления поезда");
                 Time Passenger = Fill("Время прихода пассажира");
 
-                if (IsTrainStand(TrainArrive, TrainLeave, Passenger))
+                bool IsLeaveDay = false;
+                if (TrainLeave < TrainArrive)
+                {
+                    Console.Write("Пассажир пришел в день отправления поезда? [True/False]: ");
+                    IsLeaveDay = bool.Parse(Console.ReadLine());
+                }
+
+                if (IsTrainStand(TrainArrive, TrainLeave, Passenger, IsLeaveDay))
                 {
                     Console.WriteLine("Поезд стоит на платформе");
                 }
